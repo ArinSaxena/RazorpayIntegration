@@ -1,9 +1,26 @@
-import { Text, View, StyleSheet } from "react-native";
+import { useState } from "react";
+import { Text, View, StyleSheet, TextInput } from "react-native";
+import PayBtn from "../../components/PayBtn";
+import AmountInput from "../../components/AmountInput";
 
 function PayScreen () {
+    const [amount, setAmount] = useState("");
+    const handlePay = () => {
+        console.log("pay");
+    }
     return (
         <View style={styles.container}>
-            <Text style={styles.heading}>Razorpay Payment Practice</Text>
+            <Text>Razorpay Integration Practice</Text>
+             <AmountInput
+        value={amount}
+        onChangeText={setAmount}
+      />
+
+      <PayBtn
+        amount={amount}
+        onPress={handlePay}
+        disabled={!amount}
+      />
         </View>
     )
 }

@@ -34,7 +34,7 @@ function PayBtn({
 
 const styles = StyleSheet.create({
   button: {
-    height: 52,
+    height: 50,
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
@@ -46,8 +46,15 @@ const styles = StyleSheet.create({
   },
 
   buttonText: {
-    fontSize: 16,
+    height:40,
+    width:100,
+    fontSize: 20,
+    // justifyContent:'center',
+    // alignItems:'center',
+    textAlign:'center',
     fontWeight: '600',
+    backgroundColor: '#2563EB',
+    borderRadius:10
   },
 });
 

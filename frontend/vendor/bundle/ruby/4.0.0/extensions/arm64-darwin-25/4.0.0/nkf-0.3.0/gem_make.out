@@ -1,0 +1,18 @@
+current directory: /Users/arinsaxena/Documents/RazorpayIntegration/vendor/bundle/ruby/4.0.0/gems/nkf-0.3.0/ext/nkf
+/opt/homebrew/opt/ruby/bin/ruby extconf.rb
+creating Makefile
+
+current directory: /Users/arinsaxena/Documents/RazorpayIntegration/vendor/bundle/ruby/4.0.0/gems/nkf-0.3.0/ext/nkf
+make -j11 DESTDIR\= sitearchdir\=./.gem.20260807-94957-fg5b0f sitelibdir\=./.gem.20260807-94957-fg5b0f clean
+
+current directory: /Users/arinsaxena/Documents/RazorpayIntegration/vendor/bundle/ruby/4.0.0/gems/nkf-0.3.0/ext/nkf
+make -j11 DESTDIR\= sitearchdir\=./.gem.20260807-94957-fg5b0f sitelibdir\=./.gem.20260807-94957-fg5b0f
+compiling nkf.c
+linking shared-object nkf.bundle
+
+current directory: /Users/arinsaxena/Documents/RazorpayIntegration/vendor/bundle/ruby/4.0.0/gems/nkf-0.3.0/ext/nkf
+make -j11 DESTDIR\= sitearchdir\=./.gem.20260807-94957-fg5b0f sitelibdir\=./.gem.20260807-94957-fg5b0f install
+/usr/bin/install -c -m 0755 nkf.bundle ./.gem.20260807-94957-fg5b0f
+
+current directory: /Users/arinsaxena/Documents/RazorpayIntegration/vendor/bundle/ruby/4.0.0/gems/nkf-0.3.0/ext/nkf
+make DESTDIR\= sitearchdir\=./.gem.20260807-94957-fg5b0f sitelibdir\=./.gem.20260807-94957-fg5b0f clean

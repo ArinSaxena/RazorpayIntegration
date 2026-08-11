@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
         alignItems:'center'
     },
     heading:{
-        fontSize:24,
+        fontSize:28,
         fontWeight:'600'
     }
 });

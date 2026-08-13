@@ -17,6 +17,28 @@ const razorpay = new Razorpay({
 
 app.get('/', (req: string, res: any) => {
     res.send("Razorpay backend is running");
+});
+app.post('/create-order', (req: any,res: any) => {
+    try {
+        const {amount} = req.body;
+
+        const options = {
+            amount: amount * 100, //500 -> 50000 paise
+            currency: "INR",
+            receipt:`receipt_${Date.now()}`
+        }
+        const order = razorpay.orders.create(options);
+        res.json({
+            success: true,
+            order
+        })
+    } catch(error) {
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: "Failed to create order"
+        })
+    }
 })
 
 app.listen(port,() => {

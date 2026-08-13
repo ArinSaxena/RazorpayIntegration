@@ -11,14 +11,14 @@ app.use(express.json());
 
 // Initialize Razorpay client instance with keys
 const razorpay = new Razorpay({
-    key_id:process.env.RAZORPAY_KEY_ID,
-    secret_id:process.env.RAZORPAY_KEY_SECRET
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET
 })
 
 app.get('/', (req: string, res: any) => {
     res.send("Razorpay backend is running");
 });
-app.post('/create-order', (req: any,res: any) => {
+app.post('/create-order', async (req: any,res: any) => {
     try {
         const {amount} = req.body;
 
@@ -27,10 +27,11 @@ app.post('/create-order', (req: any,res: any) => {
             currency: "INR",
             receipt:`receipt_${Date.now()}`
         }
-        const order = razorpay.orders.create(options);
+        const order = await razorpay.orders.create(options);
         res.json({
             success: true,
-            order
+            order,
+            key_id: process.env.RAZORPAY_KEY_ID
         })
     } catch(error) {
         console.error(error);

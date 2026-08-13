@@ -1,13 +1,42 @@
 import { useState } from "react";
 import { Text, View, StyleSheet, TextInput } from "react-native";
 import PayBtn from "../../components/PayBtn";
-import AmountInput from "../../components/AmountInput";
 import { SafeAreaView } from "react-native-safe-area-context";
-
+import RazorpayCheckout from 'react-native-razorpay';
 function PayScreen () {
     const [amount, setAmount] = useState("500");
-    const handlePay = () => {
+    const handlePay = async () => {
         // Razorpay checkout
+        try {
+            const response = await fetch(
+                'http://192.168.1.4:5000/create-order',
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type':'application/json',
+                    },
+                    body:JSON.stringify({
+                        amount: Number(amount)
+                    })
+                }
+            ) 
+            const data = await response.json();
+            // const text = await response.text();
+            // console.log('BACKEND RESPONSE:', text); ??
+            const order = data.order;
+
+            const options = {
+                key: data.key_id,
+                amount: order.amount,
+                currency: order.currency,
+                order_id: order.id,
+                name:'Razorpay Practice',
+                description: 'Test Payment'
+            }
+            const paymentData = await RazorpayCheckout.open(options);
+        } catch(error){
+            console.log(error);
+        }
     }
     return (
         <SafeAreaView style={{flex:1}}>

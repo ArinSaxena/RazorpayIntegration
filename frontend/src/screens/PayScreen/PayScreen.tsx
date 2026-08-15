@@ -3,6 +3,12 @@ import { Text, View, StyleSheet, TextInput } from "react-native";
 import PayBtn from "../../components/PayBtn";
 import { SafeAreaView } from "react-native-safe-area-context";
 import RazorpayCheckout from 'react-native-razorpay';
+
+type paymentData = {
+    razorpay_payment_id: string,
+    razorpay_order_id: string,
+    azorpay_signature: string
+}
 function PayScreen () {
     const [amount, setAmount] = useState("500");
     const handlePay = async () => {
@@ -34,8 +40,26 @@ function PayScreen () {
                 description: 'Test Payment'
             }
             const paymentData = await RazorpayCheckout.open(options);
+            verifyPayment(paymentData);
+
         } catch(error){
             console.log(error);
+        }
+    }
+
+    const verifyPayment = async (paymentData:paymentData) => {
+        try {
+            const response = await fetch(
+                'http://192.168.1.4:5000/verify-payment',{
+                    method: 'POST',
+                    headers:{
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(
+                        paymentData
+                    )
+                }
+            )
         }
     }
     return (

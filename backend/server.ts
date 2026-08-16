@@ -10,6 +10,38 @@ const Razorpay = require('razorpay');
 const app = express();
 const port = 5000;
 app.use(cors());
+
+app.use('/webhook',express.raw({type:'application/json'}), (req: any, res: any) => {
+    try{
+        console.log("haallo")
+        const receivedSignature = req.headers['x-razorpay-signature'];
+        const expectedSignature = cryptoModule
+        .createHmac('sha256',process.env.RAZORPAY_WEBHOOK_SECRET)
+        .update(req.body)
+        .digest('hex');
+
+        if(expectedSignature !== receivedSignature) {
+            return res.status(400).json({
+                success: false,
+                message:"Invalid webhook signature",
+            })
+        }
+        console.log('✅ Webhook signature verified');
+        const event = JSON.parse(req.body.toString());
+        console.log('Webhook event:', event.event);
+
+      return res.status(200).json({
+        success: true,
+      });
+    }catch(error){
+        console.log("cadfadf",error)
+     return res.status(200).json({
+        success:true,
+    })
+}
+}
+)
+
 app.use(express.json());
 
 // Initialize Razorpay client instance with keys
@@ -95,15 +127,6 @@ app.post('/verify-payment', async (req:any, res: any) => {
             message:'Verification error'
         })
     }
-})
-
-app.use('/webhook', (req: any, res: any) => {
-    console.log("webhook");
-    console.log(req.body);
-
-    res.status(200).json({
-        success:true,
-    })
 })
 
 app.listen(port,() => {

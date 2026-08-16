@@ -7,10 +7,11 @@ import RazorpayCheckout from 'react-native-razorpay';
 type paymentData = {
     razorpay_payment_id: string,
     razorpay_order_id: string,
-    azorpay_signature: string
+    razorpay_signature: string
 }
 function PayScreen () {
-    const [amount, setAmount] = useState("500");
+    const [amount, setAmount] = useState<Number>(500);
+    const [user, setUser] = useState('aj1dbrhjs728db8d')
     const handlePay = async () => {
         // Razorpay checkout
         try {
@@ -27,8 +28,7 @@ function PayScreen () {
                 }
             ) 
             const data = await response.json();
-            // const text = await response.text();
-            // console.log('BACKEND RESPONSE:', text); ??
+            console.log("dataaa",data)
             const order = data.order;
 
             const options = {
@@ -39,7 +39,9 @@ function PayScreen () {
                 name:'Razorpay Practice',
                 description: 'Test Payment'
             }
+            console.log("options",options)
             const paymentData = await RazorpayCheckout.open(options);
+            console.log("paymentDataa",paymentData)
             verifyPayment(paymentData);
 
         } catch(error){
@@ -55,11 +57,17 @@ function PayScreen () {
                     headers:{
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(
-                        paymentData
-                    )
+                    body: JSON.stringify({
+                        ...paymentData,
+                        amount,
+                        user
+                })
                 }
             )
+            console.log("responsee",await response.json());
+            // console.log("responsee",response.body)
+        } catch(error){
+            console.log(error);
         }
     }
     return (

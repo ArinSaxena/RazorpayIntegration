@@ -6,7 +6,7 @@ import {
 } from 'react-native';
 
 type PayButtonProps = {
-  amount: string;
+  amount: Number;
   onPress: () => void;
   disabled?: boolean;
 };

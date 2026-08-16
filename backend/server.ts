@@ -11,9 +11,8 @@ const app = express();
 const port = 5000;
 app.use(cors());
 
-app.use('/webhook',express.raw({type:'application/json'}), (req: any, res: any) => {
+app.use('/webhook',express.raw({type:'application/json'}), async(req: any, res: any) => {
     try{
-        console.log("haallo")
         const receivedSignature = req.headers['x-razorpay-signature'];
         const expectedSignature = cryptoModule
         .createHmac('sha256',process.env.RAZORPAY_WEBHOOK_SECRET)
@@ -26,19 +25,45 @@ app.use('/webhook',express.raw({type:'application/json'}), (req: any, res: any) 
                 message:"Invalid webhook signature",
             })
         }
-        console.log('✅ Webhook signature verified');
         const event = JSON.parse(req.body.toString());
-        console.log('Webhook event:', event.event);
-
-      return res.status(200).json({
-        success: true,
-      });
+        if(event.event === 'payment.captured'){
+            const payment = event.payload.payment.entity;
+            await Payment.findOneAndUpdate(
+                {
+                razorpayOrderId: payment.order_id,
+            },
+            {
+                razorpayPaymentId:payment.id,
+                status: 'success',
+            },
+            {
+                new : true
+            }
+        )
+        }
+        if (event.event === 'payment.failed') {
+            const payment = event.payload.payment.entity;
+            const updateddd =await Payment.findOneAndUpdate(
+                {
+                    razorpayOrderId: payment.order_id,
+                },
+                {
+                    razorpayPaymentId: payment.id,
+                    status: 'failed',
+                },
+                {
+                    new: true,
+                }
+            );
+        }
+        return res.status(200).json({
+            success: true,
+        });
     }catch(error){
-        console.log("cadfadf",error)
-     return res.status(200).json({
-        success:true,
-    })
-}
+        return res.status(200).json({
+            success:true,
+        })
+    }
 }
 )
 
@@ -70,6 +95,12 @@ app.post('/create-order', async (req: any,res: any) => {
         }
         console.log("Optionsss",options)
         const order = await razorpay.orders.create(options);
+        await Payment.create({
+            razorpayOrderId: order.id,
+            amount: amount,
+            status: 'created',
+});
+
         console.log("414141",order)
         res.json({
             success: true,
@@ -92,34 +123,34 @@ app.post('/verify-payment', async (req:any, res: any) => {
             razorpay_payment_id,
             razorpay_order_id,
             razorpay_signature } = req.body;
-
             const body = razorpay_order_id + '|' + razorpay_payment_id;
 
             const expectedSignature = cryptoModule
             .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
             .update(body)
             .digest('hex');
-            // console.log("6868",JSON.stringify(req))
-                        console.log("6868",req.body)
-
             if(expectedSignature ===  razorpay_signature) {
-                const payment = await Payment.create({
-                    user: req.body.user,
-                    razorpayOrderId: razorpay_order_id,
+                const payment = await Payment.findOneAndUpdate({
+                    razorpayOrderId: razorpay_order_id
+                },
+                {
                     razorpayPaymentId: razorpay_payment_id,
-                    amount: req.body.amount,
                     status: 'success'
-                })
-                return res.json({
-                    success: true,
-                    message:'Payment verified Successfully',
-                    payment
-                });
-            }
-            return res.status(400).json({
-                success: false,
-                message: 'Payment verification failed'
+                },
+                {
+                    new: true
+                }
+            )
+            return res.json({
+                success: true,
+                message:'Payment verified Successfully',
+                payment
             });
+        }
+        return res.status(400).json({
+            success: false,
+            message: 'Payment verification failed'
+        });
     } catch(error){
         console.error(error);
         res.status(500).json({

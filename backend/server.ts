@@ -60,8 +60,8 @@ app.use('/webhook',express.raw({type:'application/json'}), async(req: any, res: 
             success: true,
         });
     }catch(error){
-        return res.status(200).json({
-            success:true,
+        return res.status(500).json({
+            success:false ,
         })
     }
 }
